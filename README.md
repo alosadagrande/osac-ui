@@ -264,7 +264,7 @@ flowchart TB
   OP --> AUTH
   DOC -.-> DOC
   TI -.->|e2e| INS
-
+````
 
 ### Frontend (React SPA)
 
