@@ -83,4 +83,10 @@ The API contract and generated SDKs live at [buf.build/osac-project/public-api](
 
 ## OpenShift
 
-- Apply manifests from `deploy/dev` or `deploy/integration`.
+For a full step-by-step guide — Keycloak hostname, OIDC client registration, fulfillment trusted issuer, and troubleshooting — see [`deployment-openshift-guide.md`](deployment-openshift-guide.md).
+
+Manifests live in `deploy/dev/` and `deploy/integration/`. Configure Keycloak and fulfillment-service before applying; then:
+
+```bash
+oc apply -f deploy/dev/    # or deploy/integration/
+```

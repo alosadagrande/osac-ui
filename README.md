@@ -372,27 +372,31 @@ The container exposes port `8080`. The BFF serves the SPA at `/` and the API at 
 
 ## OpenShift deployment
 
-Manifests live in `deploy/dev/` and `deploy/integration/`.
+Manifests live in `deploy/dev/` and `deploy/integration/`. See [`docs/deployment-openshift-guide.md`](docs/deployment-openshift-guide.md) for a full step-by-step guide covering Keycloak setup, OIDC client registration, and troubleshooting.
+
+**Prerequisites** (full setup in the guide):
+
+- OpenShift cluster with `oc` CLI access.
+- **fulfillment-service** deployed and reachable (`fulfillment-internal-api` Service must exist).
+- **Keycloak** deployed with an OIDC realm (e.g. `osac`).
+- Container image pushed to a registry (if not using the default image).
 
 ```bash
 # Create namespace
 oc new-project osac-dev
 
+# Edit configmap.yaml — set FULFILLMENT_API_URL to the internal fulfillment Service URL
 # Apply all manifests
 oc apply -f deploy/dev/
 
 # Watch rollout
 oc rollout status deployment/osac -n osac-dev
+
+# Get route URL
+oc get route osac -n osac-dev -o jsonpath='{.spec.host}'
 ```
 
-The `configmap.yaml` in each environment folder controls `OSAC_API_MODE`, `FULFILLMENT_API_URL`, and `LOG_LEVEL`. Edit it before applying to switch between mock and real API modes.
-
-To expose the service externally:
-
-```bash
-oc expose svc/osac -n osac-dev
-oc get route osac -n osac-dev
-```
+The `configmap.yaml` in each environment folder controls `FULFILLMENT_API_URL`, `OIDC_CLIENT_ID`, TLS settings, and `LOG_LEVEL`. Edit it before applying.
 
 ---
 

@@ -4,9 +4,14 @@ This Helm chart deploys the OSAC UI.
 
 ## Prerequisites
 
-- OSAC backend
+- **fulfillment-service** deployed and reachable from the cluster.
+- **Keycloak** deployed with an OIDC realm and the `osac-ui` client registered.
+
+Platform integration (Keycloak `KC_HOSTNAME`, OIDC client, fulfillment trusted issuer, TLS troubleshooting) is documented in [`../../docs/deployment-openshift-guide.md`](../../docs/deployment-openshift-guide.md).
 
 ## Installation
+
+`helm install` deploys only the UI; complete Keycloak and fulfillment integration per the [OpenShift deployment guide](../../docs/deployment-openshift-guide.md) before expecting a working login flow.
 
 To install the chart with the release name `osac-ui`:
 
