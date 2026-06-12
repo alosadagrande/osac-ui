@@ -56,7 +56,7 @@ Create a public OIDC client in the **osac** realm (not in the master realm):
 Notice that the Keycloak admin user and password can be obtained from the KEYCLOAK_ADMIN and KEYCLOAK_ADMIN_PASSWORD variables set in the keycloak deployment
 
 ```bash
-oc get deployment -n keycloak -oyaml | grep -E " KEYCLOAK_ADMIN| KEYCLOAK_ADMIN_PASSWORD" -A
+oc get deployment/keycloak-service -n keycloak -o jsonpath='{range .spec.template.spec.containers[0].env[*]}{.name}={"="}{.value}{"\n"}{end}' | grep -E '^KEYCLOAK_ADMIN(_PASSWORD)?='
 ```
 
 Via Keycloak admin API:
@@ -98,7 +98,7 @@ The fulfillment-service must advertise the **external** Keycloak URL as the trus
 
 Find the `--grpc-authn-trusted-token-issuers` flag in the fulfillment gRPC server deployment and set it to the external route:
 
-```
+```bash
 --grpc-authn-trusted-token-issuers=https://keycloak-keycloak.apps.<cluster-domain>/realms/osac
 ```
 
@@ -213,3 +213,6 @@ Open the route URL in a browser. You should be redirected to Keycloak, log in wi
 | `x509: certificate signed by unknown authority` | Fulfillment or Keycloak use self-signed certs. | Set `FULFILLMENT_TLS_INSECURE=1` and `OIDC_TLS_INSECURE=1` in the ConfigMap. |
 | `context deadline exceeded` on OIDC discovery | Pod cannot reach Keycloak on the configured hostname/port. | Verify the Keycloak Service port (`oc get svc -n keycloak`) and that NetworkPolicies allow cross-namespace traffic. |
 | `unauthorized` on `podman push` | Registry token has read-only permissions. | Use `podman login` with your Quay user credentials or a robot account with Write access, not an OpenShift pull-secret. |
+
+- Prefer the CA-bundle settings for fulfillment and OIDC trust.
+- Reserve `*_TLS_INSECURE=1` for temporary dev-only troubleshooting.
